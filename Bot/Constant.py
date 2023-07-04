@@ -14,5 +14,5 @@ password_alphabets = letters + digits + special_chars
 username_alphabets = letters + digits
 
 # Scrape temp mail from sites and save them. Find mails that can be revisited afterward.
-# ex temp-mail.org provides qr that can be used to revisit the mail.
+# Ex temp-mail.org provides qr that can be used to revisit the mail.
 mail_list = ["example.com"]
