@@ -37,10 +37,10 @@ class InstaBot:
     def CreateAccount(self, email: str = "", full_name: str = "", username: str = "", password: str = "", date="0/0/0",
                       gender: str = "m") -> str:
         """
-        Create a New Instagram Account Using User Provided Information. If some data is missing, It will be generated
-        automatically.
+        Create a New Instagram Account Using User Provided Information.
+        If some data is missing, It will be generated automatically.
 
-        data needed to create an instagram account will be randomly generated as shown below =>
+        Data needed to create an instagram account will be randomly generated as shown below =>
         >> Email -- Taken from stored emails that are scrape from temp mail sites
         >> Full Name -- Randomly generated from stored First Name and Last Name. FirstChar_LastName + Random Digit(1000)
         >> Username (Unique) -- Randomly generated based on Full Name. FirstChar_LastName + Random Digit (0 , 1000)
@@ -53,10 +53,10 @@ class InstaBot:
             {full_name} = Full name for the account. format -- FirstName LastName
             {username} = username for the account.
             {password} = password for the account.
-            {date} = date of birth for the account. format -- day/month/year, example -- 23/5/2001, 2/12/1995
-            {gender} = gender for the account. Used for generating random names. m for male or f for female
+            {Date} = date of birth for the account. format -- day/month/year, example -- 23/5/2001, 2/12/1995
+            {gender} = gender for the account. Used for generating random names. M for male or f for female
         
-        :return: returns the full details of the account.
+        :return: Return the full details of the account.
         """
 
         # region Variables
@@ -147,7 +147,8 @@ class InstaBot:
 
     def Login(self):
         """
-        Log in to account using Username and Password. If cookie is stored, then login using cookie
+        Log in to account using Username and Password.
+        If a cookie is stored, then login using cookie
 
         The account info is stored in a database. The information consist of =>
         >> Username
@@ -163,9 +164,10 @@ class InstaBot:
 
     def SendMessage(self, users: list[str], message: str):
         """
-        Send message to intended user
+        Send a message to the intended user
 
-        takes two arguments, sender username and message. It selects the top search result from the message search
+        Takes two arguments, sender username and message.
+        It selects the top search result from the message search
         area and sends the message. The more exact the sender username is, the more accurate result will be
         """
 
@@ -200,7 +202,7 @@ class InstaBot:
 
         # Go to post url
         # Click on Share
-        # Search user from the list and select top result for every item on list
+        # Search user from the list and select a top result for every item on list
         # Click Send
         pass
 
@@ -248,14 +250,3 @@ class InstaBot:
         # Go to Search
         # Search for hashtag 
         pass
-
-
-c = InstaBot()
-print(c.CreateAccount())
-# email1 = "example@gmail.com"
-# name1 = "random shit"
-# username1 = "Shrank_23_Kale"
-# password1 = "asd13mffa"
-# DOB = "23/7/1995"
-# c.CreateAccount(email1, name1, username1, password1, DOB)
-# # input()
