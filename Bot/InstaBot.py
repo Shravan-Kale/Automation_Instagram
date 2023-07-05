@@ -222,23 +222,43 @@ class InstaBot:
         # Save post 
         pass
 
-    def Follow(self, user: list[str]):
+    def Follow(self, users: list[str] = None, users_url: list[str] = None):
         """
         Follow the given users profile
         """
 
-        # Go to user url
-        # Follow user 
-        pass
+        follow = '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div[2]/div[' \
+                 '2]/section/main/div/header/section/div[1]/div[2]/div/div[1]/button'
+        if users is not None:
+            for user in users:
+                url = self.SearchUser(user)
+                self.driver.get(url)
+                self.driver.find_element(By.XPATH, follow).click()
+        if users_url is not None:
+            for url in users_url:
+                self.driver.get(url)
+                self.driver.find_element(By.XPATH, follow).click()
 
-    def UnFollow(self, users: list[str]):
+    def UnFollow(self, users: list[str] = None, users_url: list[str] = None):
         """
         Un-Follow the given users profile
         """
 
-        # Go to user url
-        # Un-Follow User
-        pass
+        follow_dropdown = '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div[2]/div[' \
+                          '2]/section/main/div/header/section/div[1]/div[1]/div/div[1]/button'
+        unfollow = '/html/body/div[2]/div/div/div[3]/div/div/div[1]/div/div[2]/div/div/div/div/div[' \
+                   '2]/div/div/div/div[8]'
+        if users is not None:
+            for user in users:
+                url = self.SearchUser(user)
+                self.driver.get(url)
+                self.driver.find_element(By.XPATH, follow_dropdown).click()
+                self.driver.find_element(By.XPATH, unfollow).click()
+        if users_url is not None:
+            for url in users_url:
+                self.driver.get(url)
+                self.driver.find_element(By.XPATH, follow_dropdown).click()
+                self.driver.find_element(By.XPATH, unfollow).click()
 
     def SearchUser(self, user: str) -> str:
         """
