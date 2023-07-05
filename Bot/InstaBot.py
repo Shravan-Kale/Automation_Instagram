@@ -1,7 +1,9 @@
+# region Imports
+# region Inbuilt imports
 import random
 from time import sleep
-
-
+# endregion
+# region Selenium imports
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
@@ -10,9 +12,12 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.ui import Select
-
+# endregion
+# region Helper imports
 from Bot import Constant
 from Bot import Helper
+# endregion
+# endregion
 
 
 def ClearWhole(element: WebElement) -> WebElement:
