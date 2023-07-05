@@ -240,20 +240,38 @@ class InstaBot:
         # Un-Follow User
         pass
 
-    def SearchUser(self, users: str):
+    def SearchUser(self, user: str) -> str:
         """
         Search for the given user profile and return the topmost relevant search result
+
+        :return: Return the url of the top account.
         """
 
-        # Go to Search
-        # Search for user         
-        pass
+        self.driver.get(Constant.inatagram_base_url)
+        self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div['
+                                           '1]/div/div/div[1]/div/div[2]/div[2]/span/div/a').click()
+        self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div['
+                                           '1]/div/div/div[2]/div/div/div[2]/div[1]/div/input').send_keys(user)
+        user_url = self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div['
+                                                      '1]/div[1]/div/div/div[2]/div/div/div[2]/div[2]/div/div['
+                                                      '1]/a').get_attribute('href')
+        return user_url
 
-    def SearchPost(self, hashtag: str):
+    def SearchHashtag(self, hashtag: str) -> str:
         """
         Search for the given Hashtag. Returns the top post from the topmost relevant hashtag search
+
+        :return: Return the url of the top hashtag.
         """
 
-        # Go to Search
-        # Search for hashtag 
-        pass
+        self.driver.get(Constant.inatagram_base_url)
+        if hashtag[0] != '#':
+            hashtag = '#' + hashtag
+        self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div['
+                                           '1]/div/div/div[1]/div/div[2]/div[2]/span/div/a').click()
+        self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div['
+                                           '1]/div/div/div[2]/div/div/div[2]/div[1]/div/input').send_keys(hashtag)
+        top_hashtag_url = self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div['
+                                                             '1]/div[1]/div[1]/div/div/div[2]/div/div/div[2]/div['
+                                                             '2]/div/div[1]/a').get_attribute('href')
+        return top_hashtag_url
