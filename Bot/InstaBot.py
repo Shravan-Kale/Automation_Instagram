@@ -157,7 +157,7 @@ class InstaBot:
         return f"User Details\n\nFull Name: {full_name}\nDate Of birth (DOB): {date}\n" \
                f"Email: {email}\nUsername: {username}\nPassword: {password}"
 
-    def Login(self):
+    def Login(self, username: str, password: str):
         """
         Log in to account using Username and Password.
         If a cookie is stored, then login using cookie
@@ -170,9 +170,49 @@ class InstaBot:
         Username and Password
         """
 
-        # Try logging in using cookies
-        # Else use Username and Password
-        pass
+        error = True
+        max_error_chance = 10
+        self.driver.get(Constant.instagram_login_url)
+        sleep(1)
+        try:
+            self.driver.implicitly_wait(2)
+            if len(Constant.cookie) > 0:
+                for c in Constant.cookie:
+                    self.driver.add_cookie(c)
+                self.driver.refresh()
+                sleep(1)
+            username_text_element = self.driver.find_element(By.NAME, 'username')
+        except NoSuchElementException:
+            pass
+        else:
+            self.driver.implicitly_wait(30)
+            password_text_element = self.driver.find_element(By.NAME, 'password')
+            ClearWhole(username_text_element).send_keys(username)
+            ClearWhole(password_text_element).send_keys(password)
+            submit_button_element = self.driver.find_element(By.XPATH,
+                                                             '/html/body/div[2]/div/div/div[1]/div/div/div/div[1]/'
+                                                             'section/main/div/div/div/div[2]/form/div/div[3]/button')
+            submit_button_element.click()
+            sleep(1)
+            # Infinite Loop Can Occur. Limit the loop iterations
+            while error or max_error_chance < 0:
+                self.driver.implicitly_wait(0)
+                max_error_chance -= 1
+                sleep(10)
+                try:
+                    error_text = self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div/div['
+                                                                    '1]/section/main/div/div/div[1]/div[2]/form/div['
+                                                                    '2]/p').text
+                except NoSuchElementException:
+                    error = False
+                else:
+                    if 'password' in error_text:
+                        password = input("Password Incorrect. Enter New One")
+                        ClearWhole(password_text_element).send_keys(password)
+                    submit_button_element.click()
+                self.driver.implicitly_wait(30)
+        finally:
+            self.driver.find_element(By.XPATH, '//button[text()="Not Now"]').click()
 
     def SendMessage(self, users: list[str], message: str):
         """
