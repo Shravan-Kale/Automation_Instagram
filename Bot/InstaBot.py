@@ -223,11 +223,29 @@ class InstaBot:
         area and sends the message. The more exact the sender username is, the more accurate result will be
         """
 
-        # Navigate to message page
-        # Search for the user
-        # Select the top user 
-        # Write the message and Send
-        pass
+        self.driver.get(Constant.instagram_direct_message_url)
+        sleep(1)
+        self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div['
+                                           '2]/section/div/div/div/div[1]/div/div[1]/div/div[1]/div[2]/div/div').click()
+        search_element = self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[3]/div/div/div[1]/div/div['
+                                                            '2]/div/div/div/div/div/div/div[2]/div[2]/input')
+        for user in users:
+            search_element.send_keys(user)
+            sleep(1)
+            self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[3]/div/div/div[1]/div/div['
+                                               '2]/div/div/div/div/div/div/div[3]/div/div/div[1]').click()
+        sleep(1)
+        self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[3]/div/div/div[1]/div/div['
+                                           '2]/div/div/div/div/div/div/div[4]/div').click()
+        message_box_element = self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div['
+                                                                 '1]/div[1]/div[2]/section/div/div/div/div['
+                                                                 '1]/div/div[2]/div/div/div/div/div/div['
+                                                                 '2]/div/div/div[2]/div/div/div[2]/div/div[1]')
+        ClearWhole(message_box_element).send_keys(message)
+        sleep(.5)
+        self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div['
+                                           '2]/section/div/div/div/div[1]/div/div[2]/div/div/div/div/div/div['
+                                           '2]/div/div/div[2]/div/div/div[3]').click()
 
     def Like(self, url: str):
         """
