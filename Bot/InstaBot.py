@@ -33,9 +33,10 @@ class InstaBot:
         self.service = service
         self.keep_alive = keep_alive
         self.driver = webdriver.Chrome(self.options, self.service, self.keep_alive)
+        self.driver.implicitly_wait(30)
 
-    def CreateAccount(self, email: str = "", full_name: str = "", username: str = "", password: str = "", date="0/0/0",
-                      gender: str = "m") -> str:
+    def CreateAccount(self, email: str = None, full_name: str = None, username: str = None, password: str = None,
+                      date: str = None, gender: str = "m") -> str:
         """
         Create a New Instagram Account Using User Provided Information.
         If some data is missing, It will be generated automatically.
@@ -51,7 +52,7 @@ class InstaBot:
         :param: All parameters are optional and of string type
             {email} = email for the account. example -- example@gmail.com
             {full_name} = Full name for the account. format -- FirstName LastName
-            {username} = username for the account.
+            {username} = username for the account. Only letters numbers underscore and period. Not end with period
             {password} = password for the account.
             {Date} = date of birth for the account. format -- day/month/year, example -- 23/5/2001, 2/12/1995
             {gender} = gender for the account. Used for generating random names. M for male or f for female
@@ -62,18 +63,20 @@ class InstaBot:
         # region Variables
         error = True
         max_error_chance = 10
-        auto_generate_email = email == ""
-        auto_generate_username = username == ""
-        if full_name == "":
+        auto_generate_email = False
+        auto_generate_username = False
+        if full_name is None:
             full_name = Helper.GetRandomName(gender)
-        if password == "":
+        if password is None:
             password = Helper.GetRandomPassword()
-        if date == "0/0/0":
+        if date is None:
             date = Helper.GetRandomDOB()
-        if auto_generate_email:
+        if email is None:
+            auto_generate_email = True
             email = Helper.GetRandomMail()
-        if auto_generate_username:
-            username = Helper.GetRandomUsername(full_name)
+        if username is None:
+            auto_generate_username = True
+            email = Helper.GetRandomUsername(full_name)
         # endregion
         # region User Details
         self.driver.get(Constant.instagram_signup_url)
@@ -94,11 +97,14 @@ class InstaBot:
         self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div/div['
                                            '1]/section/main/div/div/div[1]/div[2]/form/div[7]/div/button').click()
         # Infinite Loop Can Occur. Limit the loop iterations
+        self.driver.implicitly_wait(0)
         while error or max_error_chance < 0:
             max_error_chance -= 1
             sleep(1)
             try:
-                error_element = self.driver.find_element(By.ID, 'ssfErrorAlert').text
+                error_element = self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div/div['
+                                                                   '1]/section/main/div/div/div[1]/div[2]/form/div['
+                                                                   '8]/p').text
             except NoSuchElementException:
                 error = False
             else:
@@ -119,6 +125,7 @@ class InstaBot:
                     ClearWhole(username_text_element).send_keys(username)
                 self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div/div[''1]/section/main/'
                                                    'div/div/div[1]/div[2]/form/div[7]/div/button').click()
+        self.driver.implicitly_wait(30)
         # endregion
         # region Date Of Birth
         day, month, year = date.split("/")
