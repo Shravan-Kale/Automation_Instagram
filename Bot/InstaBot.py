@@ -252,38 +252,60 @@ class InstaBot:
         Like the given Post.
         """
 
-        # Go to post url
-        # Like the Post
-        pass
+        self.driver.get(url)
+        self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div[2]/section/'
+                                           'main/div/div[1]/div/div[2]/div/div[3]/div[1]/div[1]/span[1]/div').click()
 
     def Comment(self, url: str, comment: str):
         """
         Comment on the given Post.
         """
 
-        # Go to post url
-        # Write comment and post 
-        pass
+        self.driver.get(url)
+        self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div[2]/section/'
+                                           'main/div/div[1]/div/div[2]/div/div[3]/div[1]/div[1]/span[2]/div').click()
+        comment_element = self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div['
+                                                             '1]/div[1]/div[2]/section/main/div/div[1]/div/div['
+                                                             '2]/div/section/div/form/div/textarea')
+        ClearWhole(comment_element).send_keys(comment)
+        self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div['
+                                           '2]/section/main/div/div[1]/div/div[2]/div/section/div/form/div/div['
+                                           '2]/div').click()
 
-    def Share(self, url: str, users: list[str]):
+    def Share(self, url: str, users: list[str], msg: str = None):
         """
         Share the given Post.
         """
 
-        # Go to post url
-        # Click on Share
-        # Search user from the list and select a top result for every item on list
-        # Click Send
-        pass
+        self.driver.get(url)
+        self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div['
+                                           '2]/section/main/div/div[1]/div/div[2]/div/div[3]/div[1]/div['
+                                           '1]/button').click()
+        search_element = self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[3]/div/div/div[1]/div/div['
+                                                            '2]/div/div/div/div/div[2]/div/div[2]/div[1]/div/div['
+                                                            '2]/input')
+        for user in users:
+            search_element.click()
+            search_element.send_keys(user)
+            sleep(1)
+            self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[3]/div/div/div['
+                                               '1]/div/div[2]/div/div/div/div/div[2]/div/div[2]/div['
+                                               '2]/div[2]/div[1]/div/div/div[3]/div/div').click()
+        if msg is not None:
+            self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[3]/div/div/div[1]/div/div['
+                                               '2]/div/div/div/div/div[2]/div/div[2]/div[3]/input').send_keys(msg)
+            sleep(1)
+        self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[3]/div/div/div[1]/div/div['
+                                           '2]/div/div/div/div/div[2]/div/div[2]/div[4]/button').click()
 
     def Save(self, url: str):
         """
         Share the given Post (In default album).
         """
 
-        # Go to post url
-        # Save post 
-        pass
+        self.driver.get(url)
+        self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div[2]/section/'
+                                           'main/div/div[1]/div/div[2]/div/div[3]/div[1]/div[3]/div/div/div').click()
 
     def Follow(self, users: list[str] = None, users_url: list[str] = None):
         """
