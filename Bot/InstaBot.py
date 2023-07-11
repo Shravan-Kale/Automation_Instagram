@@ -98,12 +98,11 @@ class InstaBot:
         password_text_element = self.driver.find_element(By.NAME, 'password')
         ClearWhole(password_text_element).send_keys(password)
         sleep(random.uniform(.2, 1.5))
-        # Click Next
-        self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div/div['
-                                           '1]/section/main/div/div/div[1]/div[2]/form/div[7]/div/button').click()
         # Infinite Loop Can Occur. Limit the loop iterations
         self.driver.implicitly_wait(0)
         while error or max_error_chance < 0:
+            self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div/div['
+                                               '1]/section/main/div/div/div[1]/div[2]/form/div[7]/div/button').click()
             max_error_chance -= 1
             sleep(1)
             try:
@@ -117,19 +116,21 @@ class InstaBot:
                     if auto_generate_username:
                         username = Helper.GetRandomUsername(full_name)
                     else:
-                        username = input("Username Not Available. New One")
+                        username = input("Username Not Available. Enter New One")
                     ClearWhole(username_text_element).send_keys(username)
-                if 'email' in error_element:
+                elif 'password' in error_element:
+                    password = input("Password Not Strong. Enter New One")
+                    ClearWhole(password_text_element).send_keys(password)
+                elif 'email' in error_element:
                     if auto_generate_email:
                         email = Helper.GetRandomMail()
                     else:
                         email = input("Email Not Available. Enter New One")
                     ClearWhole(email_text_element).send_keys(email)
-                if 'and periods.' in error_element:
-                    username = input("Username Contains Unaccepted Characters. Enter New One")
-                    ClearWhole(username_text_element).send_keys(username)
-                self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div/div[''1]/section/main/'
-                                                   'div/div/div[1]/div[2]/form/div[7]/div/button').click()
+                else:
+                    print(f"Error occured while creating account. Error:- {error_element}. Please Try Again")
+                    return f"Error:- {error_element}"
+
         self.driver.implicitly_wait(30)
         # endregion
         # region Date Of Birth
@@ -148,7 +149,7 @@ class InstaBot:
         if auto_generate_email:
             verification_code = Helper.GetVerificationCodeAuto()
         else:
-            verification_code = Helper.GetVerificationCodeUser()
+            verification_code = input("Enter Verification Code")
         verification_text_element = self.driver.find_element(By.NAME, 'email_confirmation_code')
         ClearWhole(verification_text_element).send_keys(verification_code)
         self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div/div['
@@ -211,8 +212,7 @@ class InstaBot:
                         ClearWhole(password_text_element).send_keys(password)
                     submit_button_element.click()
                 self.driver.implicitly_wait(30)
-        finally:
-            self.driver.find_element(By.XPATH, '//button[text()="Not Now"]').click()
+        self.driver.find_element(By.XPATH, '//button[text()="Not Now"]').click()
 
     def SendMessage(self, users: list[str], message: str):
         """
