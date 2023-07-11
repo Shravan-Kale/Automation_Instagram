@@ -128,7 +128,7 @@ class InstaBot:
                         email = input("Email Not Available. Enter New One")
                     ClearWhole(email_text_element).send_keys(email)
                 else:
-                    print(f"Error occured while creating account. Error:- {error_element}. Please Try Again")
+                    print(f"Error occurred while creating account. Error:- {error_element}. Please Try Again")
                     return f"Error:- {error_element}"
 
         self.driver.implicitly_wait(30)
@@ -362,7 +362,7 @@ class InstaBot:
                                                       '1]/a').get_attribute('href')
         return user_url
 
-    def SearchHashtag(self, hashtag: str) -> str:
+    def SearchHashtag(self, hashtag: str, hashtag_number: int = 1) -> str:
         """
         Search for the given Hashtag. Returns the top post from the topmost relevant hashtag search
 
@@ -378,5 +378,40 @@ class InstaBot:
                                            '1]/div/div/div[2]/div/div/div[2]/div[1]/div/input').send_keys(hashtag)
         top_hashtag_url = self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div['
                                                              '1]/div[1]/div[1]/div/div/div[2]/div/div/div[2]/div['
-                                                             '2]/div/div[1]/a').get_attribute('href')
+                                                             '2]/div/div[' + str(min([hashtag_number, 55])) +
+                                                   ']/a').get_attribute('href')
         return top_hashtag_url
+
+    def GetPostUsersFromHashtagNumber(self, hashtag: str, hashtag_number: int = 1, number_of_posts: int = 9) \
+            -> list[str]:
+        """
+        Search for the given Hashtag and return the users of the top posts
+
+        :return: Return the list of users having top posts.
+        """
+
+        top_hashtag_url = self.SearchHashtag(hashtag, min([hashtag_number, 55]))
+        users = []
+        number_of_posts -= 1
+        rows = (min([number_of_posts - 1, 8]) // 3)
+        cols = (min([number_of_posts - 1, 8]) % 3)
+        self.driver.get(top_hashtag_url)
+        for row in range(1, rows + 2):
+            for col in range(1, cols + 2):
+                try:
+                    post_link = self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div['
+                                                                   '1]/div[1]/div[2]/section/main/article/div/div/div/'
+                                                                   'div[' + str(row) + ']/div[' + str(col) + ']/a') \
+                        .get_attribute('href')
+                    self.driver.execute_script(f"window.open('{Constant.inatagram_base_url + post_link}');")
+                    self.driver.switch_to.window(self.driver.window_handles[1])
+                    user = self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div['
+                                                              '1]/div[1]/div[2]/section/main/div/div[1]/div/div['
+                                                              '2]/div/div[1]/header/div[2]/div[1]/div['
+                                                              '1]/div/div/span/div/div/a').get_attribute('href')
+                    users.append(user)
+                except NoSuchElementException:
+                    pass
+                self.driver.close()
+                self.driver.switch_to.window(self.driver.window_handles[0])
+        return users
