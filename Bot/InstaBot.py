@@ -86,23 +86,32 @@ class InstaBot:
         # region User Details
         self.driver.get(Constant.instagram_signup_url)
         sleep(1)
-        email_text_element = self.driver.find_element(By.NAME, 'emailOrPhone')
-        ClearWhole(email_text_element).send_keys(email)
-        sleep(random.uniform(.2, 1.5))
-        name_text_element = self.driver.find_element(By.NAME, 'fullName')
-        ClearWhole(name_text_element).send_keys(full_name)
-        sleep(random.uniform(.2, 1.5))
-        username_text_element = self.driver.find_element(By.NAME, 'username')
-        ClearWhole(username_text_element).send_keys(username)
-        sleep(random.uniform(.2, 1.5))
-        password_text_element = self.driver.find_element(By.NAME, 'password')
-        ClearWhole(password_text_element).send_keys(password)
-        sleep(random.uniform(.2, 1.5))
+        try:
+            email_text_element = self.driver.find_element(By.NAME, 'emailOrPhone')
+            ClearWhole(email_text_element).send_keys(email)
+            sleep(random.uniform(.2, 1.5))
+            name_text_element = self.driver.find_element(By.NAME, 'fullName')
+            ClearWhole(name_text_element).send_keys(full_name)
+            sleep(random.uniform(.2, 1.5))
+            username_text_element = self.driver.find_element(By.NAME, 'username')
+            ClearWhole(username_text_element).send_keys(username)
+            sleep(random.uniform(.2, 1.5))
+            password_text_element = self.driver.find_element(By.NAME, 'password')
+            ClearWhole(password_text_element).send_keys(password)
+            sleep(random.uniform(.2, 1.5))
+        except NoSuchElementException:
+            print("Error occurred while finding text area fro details. Please Try Again")
+            return "No Element Found"
         # Infinite Loop Can Occur. Limit the loop iterations
         self.driver.implicitly_wait(0)
         while error or max_error_chance < 0:
-            self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div/div['
-                                               '1]/section/main/div/div/div[1]/div[2]/form/div[7]/div/button').click()
+            try:
+                self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div/div['
+                                                   '1]/section/main/div/div/div[1]/div[2]/form/div['
+                                                   '7]/div/button').click()
+            except NoSuchElementException:
+                print("Error occurred while clicking on next button (Account details). Please Try Again")
+                return "No Element Found"
             max_error_chance -= 1
             sleep(1)
             try:
@@ -135,14 +144,18 @@ class InstaBot:
         # endregion
         # region Date Of Birth
         day, month, year = date.split("/")
-        Select(self.driver.find_element(By.XPATH, '//select[@title="Month:"]')).select_by_value(month)
-        sleep(random.uniform(.2, 1.5))
-        Select(self.driver.find_element(By.XPATH, '//select[@title="Day:"]')).select_by_value(day)
-        sleep(random.uniform(.2, 1.5))
-        Select(self.driver.find_element(By.XPATH, '//select[@title="Year:"]')).select_by_value(year)
-        sleep(random.uniform(.2, 1.5))
-        self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div/div['
-                                           '1]/section/main/div/div/div[1]/div/div[6]/button').click()
+        try:
+            Select(self.driver.find_element(By.XPATH, '//select[@title="Month:"]')).select_by_value(month)
+            sleep(random.uniform(.2, 1.5))
+            Select(self.driver.find_element(By.XPATH, '//select[@title="Day:"]')).select_by_value(day)
+            sleep(random.uniform(.2, 1.5))
+            Select(self.driver.find_element(By.XPATH, '//select[@title="Year:"]')).select_by_value(year)
+            sleep(random.uniform(.2, 1.5))
+            self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div/div['
+                                               '1]/section/main/div/div/div[1]/div/div[6]/button').click()
+        except NoSuchElementException:
+            print("Error occurred while selecting date of birth. Please Try Again")
+            return "No Element Found"
         sleep(1)
         # endregion
         # region Verification Code
@@ -150,10 +163,14 @@ class InstaBot:
             verification_code = Helper.GetVerificationCodeAuto()
         else:
             verification_code = input("Enter Verification Code")
-        verification_text_element = self.driver.find_element(By.NAME, 'email_confirmation_code')
-        ClearWhole(verification_text_element).send_keys(verification_code)
-        self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div/div['
-                                           '1]/section/main/div/div/div/div[2]/form/div/div[2]/button').click()
+        try:
+            verification_text_element = self.driver.find_element(By.NAME, 'email_confirmation_code')
+            ClearWhole(verification_text_element).send_keys(verification_code)
+            self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[1]/div/div/div/div['
+                                               '1]/section/main/div/div/div/div[2]/form/div/div[2]/button').click()
+        except NoSuchElementException:
+            print("Error occurred while doing verification. Please Try Again")
+            return "No Element Found"
         # endregion
         return f"User Details\n\nFull Name: {full_name}\nDate Of birth (DOB): {date}\n" \
                f"Email: {email}\nUsername: {username}\nPassword: {password}"
@@ -212,7 +229,10 @@ class InstaBot:
                         ClearWhole(password_text_element).send_keys(password)
                     submit_button_element.click()
                 self.driver.implicitly_wait(30)
-        self.driver.find_element(By.XPATH, '//button[text()="Not Now"]').click()
+        try:
+            self.driver.find_element(By.XPATH, '//button[text()="Not Now"]').click()
+        except NoSuchElementException:
+            pass
 
     def SendMessage(self, users: list[str], message: str):
         """
@@ -225,27 +245,42 @@ class InstaBot:
 
         self.driver.get(Constant.instagram_direct_message_url)
         sleep(1)
-        self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div['
-                                           '2]/section/div/div/div/div[1]/div/div[1]/div/div[1]/div[2]/div/div').click()
-        search_element = self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[3]/div/div/div[1]/div/div['
-                                                            '2]/div/div/div/div/div/div/div[2]/div[2]/input')
-        for user in users:
-            search_element.send_keys(user)
+        try:
+            self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div['
+                                               '2]/section/div/div/div/div[1]/div/div[1]/div/div[1]/div['
+                                               '2]/div/div').click()
+            search_element = self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[3]/div/div/div['
+                                                                '1]/div/div[2]/div/div/div/div/div/div/div[2]/div['
+                                                                '2]/input')
+        except NoSuchElementException:
+            print("Error occurred while initiating send message. Please Try Again")
+            return "No Element Found"
+
+        try:
+            for user in users:
+                search_element.send_keys(user)
+                sleep(1)
+                self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[3]/div/div/div[1]/div/div['
+                                                   '2]/div/div/div/div/div/div/div[3]/div/div/div[1]').click()
             sleep(1)
             self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[3]/div/div/div[1]/div/div['
-                                               '2]/div/div/div/div/div/div/div[3]/div/div/div[1]').click()
-        sleep(1)
-        self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[3]/div/div/div[1]/div/div['
-                                           '2]/div/div/div/div/div/div/div[4]/div').click()
-        message_box_element = self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div['
-                                                                 '1]/div[1]/div[2]/section/div/div/div/div['
-                                                                 '1]/div/div[2]/div/div/div/div/div/div['
-                                                                 '2]/div/div/div[2]/div/div/div[2]/div/div[1]')
-        ClearWhole(message_box_element).send_keys(message)
-        sleep(.5)
-        self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div['
-                                           '2]/section/div/div/div/div[1]/div/div[2]/div/div/div/div/div/div['
-                                           '2]/div/div/div[2]/div/div/div[3]').click()
+                                               '2]/div/div/div/div/div/div/div[4]/div').click()
+        except NoSuchElementException:
+            print("Error occurred while selecting user. Please Try Again")
+            return "No Element Found"
+        try:
+            message_box_element = self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div['
+                                                                     '1]/div[1]/div[2]/section/div/div/div/div['
+                                                                     '1]/div/div[2]/div/div/div/div/div/div['
+                                                                     '2]/div/div/div[2]/div/div/div[2]/div/div[1]')
+            ClearWhole(message_box_element).send_keys(message)
+            sleep(.5)
+            self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div['
+                                               '2]/section/div/div/div/div[1]/div/div[2]/div/div/div/div/div/div['
+                                               '2]/div/div/div[2]/div/div/div[3]').click()
+        except NoSuchElementException:
+            print("Error occurred while sending message. Please Try Again")
+            return "No Element Found"
 
     def Like(self, url: str):
         """
@@ -253,8 +288,13 @@ class InstaBot:
         """
 
         self.driver.get(url)
-        self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div[2]/section/'
-                                           'main/div/div[1]/div/div[2]/div/div[3]/div[1]/div[1]/span[1]/div').click()
+        try:
+            self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div['
+                                               '2]/section/main/div/div[1]/div/div[2]/div/div[3]/div[1]/div[1]/span['
+                                               '1]/div').click()
+        except NoSuchElementException:
+            print("Error occurred while liking post. Please Try Again")
+            return "No Element Found"
 
     def Comment(self, url: str, comment: str):
         """
@@ -262,15 +302,20 @@ class InstaBot:
         """
 
         self.driver.get(url)
-        self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div[2]/section/'
-                                           'main/div/div[1]/div/div[2]/div/div[3]/div[1]/div[1]/span[2]/div').click()
-        comment_element = self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div['
-                                                             '1]/div[1]/div[2]/section/main/div/div[1]/div/div['
-                                                             '2]/div/section/div/form/div/textarea')
-        ClearWhole(comment_element).send_keys(comment)
-        self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div['
-                                           '2]/section/main/div/div[1]/div/div[2]/div/section/div/form/div/div['
-                                           '2]/div').click()
+        try:
+            self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div['
+                                               '2]/section/main/div/div[1]/div/div[2]/div/div[3]/div[1]/div[1]/span['
+                                               '2]/div').click()
+            comment_element = self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div['
+                                                                 '1]/div[1]/div[2]/section/main/div/div[1]/div/div['
+                                                                 '2]/div/section/div/form/div/textarea')
+            ClearWhole(comment_element).send_keys(comment)
+            self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div['
+                                               '2]/section/main/div/div[1]/div/div[2]/div/section/div/form/div/div['
+                                               '2]/div').click()
+        except NoSuchElementException:
+            print("Error occurred while commenting. Please Try Again")
+            return "No Element Found"
 
     def Share(self, url: str, users: list[str], msg: str = None):
         """
@@ -278,25 +323,38 @@ class InstaBot:
         """
 
         self.driver.get(url)
-        self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div['
-                                           '2]/section/main/div/div[1]/div/div[2]/div/div[3]/div[1]/div['
-                                           '1]/button').click()
-        search_element = self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[3]/div/div/div[1]/div/div['
-                                                            '2]/div/div/div/div/div[2]/div/div[2]/div[1]/div/div['
-                                                            '2]/input')
-        for user in users:
-            search_element.click()
-            search_element.send_keys(user)
-            sleep(1)
-            self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[3]/div/div/div['
-                                               '1]/div/div[2]/div/div/div/div/div[2]/div/div[2]/div['
-                                               '2]/div[2]/div[1]/div/div/div[3]/div/div').click()
-        if msg is not None:
+        try:
+            self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div['
+                                               '2]/section/main/div/div[1]/div/div[2]/div/div[3]/div[1]/div['
+                                               '1]/button').click()
+            search_element = self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[3]/div/div/div['
+                                                                '1]/div/div[2]/div/div/div/div/div[2]/div/div[2]/div['
+                                                                '1]/div/div['
+                                                                '2]/input')
+        except NoSuchElementException:
+            print("Error occurred while initiating share. Please Try Again")
+            return "No Element Found"
+        try:
+            for user in users:
+                search_element.click()
+                search_element.send_keys(user)
+                sleep(1)
+                self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[3]/div/div/div['
+                                                   '1]/div/div[2]/div/div/div/div/div[2]/div/div[2]/div['
+                                                   '2]/div[2]/div[1]/div/div/div[3]/div/div').click()
+        except NoSuchElementException:
+            print("Error occurred while selecting user. Please Try Again")
+            return "No Element Found"
+        try:
+            if msg is not None:
+                self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[3]/div/div/div[1]/div/div['
+                                                   '2]/div/div/div/div/div[2]/div/div[2]/div[3]/input').send_keys(msg)
+                sleep(1)
             self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[3]/div/div/div[1]/div/div['
-                                               '2]/div/div/div/div/div[2]/div/div[2]/div[3]/input').send_keys(msg)
-            sleep(1)
-        self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[3]/div/div/div[1]/div/div['
-                                           '2]/div/div/div/div/div[2]/div/div[2]/div[4]/button').click()
+                                               '2]/div/div/div/div/div[2]/div/div[2]/div[4]/button').click()
+        except NoSuchElementException:
+            print("Error occurred while sharing post. Please Try Again")
+            return "No Element Found"
 
     def Save(self, url: str):
         """
@@ -304,8 +362,13 @@ class InstaBot:
         """
 
         self.driver.get(url)
-        self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div[2]/section/'
-                                           'main/div/div[1]/div/div[2]/div/div[3]/div[1]/div[3]/div/div/div').click()
+        try:
+            self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div['
+                                               '2]/section/main/div/div[1]/div/div[2]/div/div[3]/div[1]/div['
+                                               '3]/div/div/div').click()
+        except NoSuchElementException:
+            print("Error occurred while saving post. Please Try Again")
+            return "No Element Found"
 
     def Follow(self, users: list[str] = None, users_url: list[str] = None):
         """
@@ -314,15 +377,19 @@ class InstaBot:
 
         follow = '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div[2]/div[' \
                  '2]/section/main/div/header/section/div[1]/div[2]/div/div[1]/button'
-        if users is not None:
-            for user in users:
-                url = self.SearchUser(user)
-                self.driver.get(url)
-                self.driver.find_element(By.XPATH, follow).click()
-        if users_url is not None:
-            for url in users_url:
-                self.driver.get(url)
-                self.driver.find_element(By.XPATH, follow).click()
+        try:
+            if users is not None:
+                for user in users:
+                    url = self.SearchUser(user)
+                    self.driver.get(url)
+                    self.driver.find_element(By.XPATH, follow).click()
+            if users_url is not None:
+                for url in users_url:
+                    self.driver.get(url)
+                    self.driver.find_element(By.XPATH, follow).click()
+        except NoSuchElementException:
+            print("Error occurred while following user. Please Try Again")
+            return "No Element Found"
 
     def UnFollow(self, users: list[str] = None, users_url: list[str] = None):
         """
@@ -333,17 +400,21 @@ class InstaBot:
                           '2]/section/main/div/header/section/div[1]/div[1]/div/div[1]/button'
         unfollow = '/html/body/div[2]/div/div/div[3]/div/div/div[1]/div/div[2]/div/div/div/div/div[' \
                    '2]/div/div/div/div[8]'
-        if users is not None:
-            for user in users:
-                url = self.SearchUser(user)
-                self.driver.get(url)
-                self.driver.find_element(By.XPATH, follow_dropdown).click()
-                self.driver.find_element(By.XPATH, unfollow).click()
-        if users_url is not None:
-            for url in users_url:
-                self.driver.get(url)
-                self.driver.find_element(By.XPATH, follow_dropdown).click()
-                self.driver.find_element(By.XPATH, unfollow).click()
+        try:
+            if users is not None:
+                for user in users:
+                    url = self.SearchUser(user)
+                    self.driver.get(url)
+                    self.driver.find_element(By.XPATH, follow_dropdown).click()
+                    self.driver.find_element(By.XPATH, unfollow).click()
+            if users_url is not None:
+                for url in users_url:
+                    self.driver.get(url)
+                    self.driver.find_element(By.XPATH, follow_dropdown).click()
+                    self.driver.find_element(By.XPATH, unfollow).click()
+        except NoSuchElementException:
+            print("Error occurred while un-following user. Please Try Again")
+            return "No Element Found"
 
     def SearchUser(self, user: str) -> str:
         """
@@ -352,14 +423,18 @@ class InstaBot:
         :return: Return the url of the top account.
         """
 
-        self.driver.get(Constant.inatagram_base_url)
-        self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div['
-                                           '1]/div/div/div[1]/div/div[2]/div[2]/span/div/a').click()
-        self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div['
-                                           '1]/div/div/div[2]/div/div/div[2]/div[1]/div/input').send_keys(user)
-        user_url = self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div['
-                                                      '1]/div[1]/div/div/div[2]/div/div/div[2]/div[2]/div/div['
-                                                      '1]/a').get_attribute('href')
+        try:
+            self.driver.get(Constant.inatagram_base_url)
+            self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div['
+                                               '1]/div/div/div[1]/div/div[2]/div[2]/span/div/a').click()
+            self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div['
+                                               '1]/div/div/div[2]/div/div/div[2]/div[1]/div/input').send_keys(user)
+            user_url = self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div['
+                                                          '1]/div[1]/div/div/div[2]/div/div/div[2]/div[2]/div/div['
+                                                          '1]/a').get_attribute('href')
+        except NoSuchElementException:
+            print("Error occurred while searching user. Please Try Again")
+            return "No Element Found"
         return user_url
 
     def SearchHashtag(self, hashtag: str, hashtag_number: int = 1) -> str:
@@ -372,14 +447,18 @@ class InstaBot:
         self.driver.get(Constant.inatagram_base_url)
         if hashtag[0] != '#':
             hashtag = '#' + hashtag
-        self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div['
-                                           '1]/div/div/div[1]/div/div[2]/div[2]/span/div/a').click()
-        self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div['
-                                           '1]/div/div/div[2]/div/div/div[2]/div[1]/div/input').send_keys(hashtag)
-        top_hashtag_url = self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div['
-                                                             '1]/div[1]/div[1]/div/div/div[2]/div/div/div[2]/div['
-                                                             '2]/div/div[' + str(min([hashtag_number, 55])) +
-                                                   ']/a').get_attribute('href')
+        try:
+            self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div['
+                                               '1]/div/div/div[1]/div/div[2]/div[2]/span/div/a').click()
+            self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div['
+                                               '1]/div/div/div[2]/div/div/div[2]/div[1]/div/input').send_keys(hashtag)
+            top_hashtag_url = self.driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div['
+                                                                 '1]/div[1]/div[1]/div/div/div[2]/div/div/div[2]/div['
+                                                                 '2]/div/div[' + str(min([hashtag_number, 55])) +
+                                                       ']/a').get_attribute('href')
+        except NoSuchElementException:
+            print("Error occurred while searching hashtag. Please Try Again")
+            return "No Element Found"
         return top_hashtag_url
 
     def GetPostUsersFromHashtagNumber(self, hashtag: str, hashtag_number: int = 1, number_of_posts: int = 9) \
