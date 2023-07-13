@@ -9,11 +9,6 @@ def GetRandomMail():
     return Constant.mail_list[-1]
 
 
-def GetVerificationCodeUser() -> str:
-    code = input("Enter Verification Code")
-    return code
-
-
 def GetVerificationCodeAuto() -> str:
     return "123456"
 
