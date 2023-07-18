@@ -103,7 +103,7 @@ hashtag_element = '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/di
 
 # region GetPostUsersFromHashtagNumber
 hashtag_post_element = '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div[' \
-                       '2]/section/main/article/div/div/div/div['
+                       '2]/section/main/article/div/div/div/div[{}]/a'
 hashtag_post_user_a = '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div[2]/section/main/div/div[' \
-                      '1]/div/div[2]/div/div[1]/header/div[2]/div[1]/div[1]/div/div/span/div/div/a'
+                      '1]/div/div[2]/div/div[1]/header/div[2]/div[1]/div[1]/div/div/span/div/div/a{}]/div[{}]/a'
 # endregion

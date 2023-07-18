@@ -27,7 +27,7 @@ def ClearWhole(element: WebElement) -> WebElement:
     return element
 
 
-def ClearBackspace(element: WebElement, times: int) -> WebElement:
+def ClearBackspace(element: WebElement, times: int = 1) -> WebElement:
     for i in range(times):
         element.send_keys(Keys.BACK_SPACE)
     return element
@@ -401,8 +401,8 @@ class InstaBot:
         try:
             self.driver.find_element(By.XPATH, Elements_Search_Path.search_button).click()
             self.driver.find_element(By.XPATH, Elements_Search_Path.search_text_area).send_keys(hashtag)
-            top_hashtag_url = self.driver.find_element(By.XPATH, Elements_Search_Path.hashtag_element +
-                                                       str(min([hashtag_number, 55])) + ']/a').get_attribute('href')
+            top_hashtag_url = self.driver.find_element(By.XPATH, Elements_Search_Path.hashtag_element.
+                                                       format(str(min([hashtag_number, 55])))).get_attribute('href')
         except NoSuchElementException:
             print("Error occurred while searching hashtag. Please Try Again")
             return "No Element Found"
@@ -425,8 +425,8 @@ class InstaBot:
         for row in range(1, rows + 2):
             for col in range(1, cols + 2):
                 try:
-                    post_link = self.driver.find_element(By.XPATH, Elements_Search_Path.hashtag_post_element
-                                                         + str(row) + ']/div[' + str(col) + ']/a').get_attribute('href')
+                    post_link = self.driver.find_element(By.XPATH, Elements_Search_Path.hashtag_post_element.
+                                                         format(str(row), str(col))).get_attribute('href')
                     self.driver.execute_script(f"window.open('{Constant.inatagram_base_url + post_link}');")
                     self.driver.switch_to.window(self.driver.window_handles[1])
                     user = self.driver.find_element(By.XPATH,
